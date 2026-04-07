@@ -81,7 +81,7 @@ with open("./data/test_REC", 'w+') as f:
         f.write(row['filename'] + "\n")
     Y_test.drop(columns=['filename', "OTHER"]).to_csv("./data/test_db.csv")
 
-os.system("python3 ./sergio/generate_h5.py ./data/test_REC ./data/test.hdf5 --root_dir ./ptbxl --use_all_leds")
-os.system("python3 ./sergio/generate_h5.py ./data/train_REC ./data/train.hdf5 --root_dir ./ptbxl  --use_all_leds")
-os.system("python3 ./sergio/generate_h5.py ./data/validation_REC ./data/validation.hdf5 --root_dir ./ptbxl --use_all_leds")
+os.system("python3 ./sergio/generate_h5.py ./data/test_REC ./data/test.hdf5 --root_dir ./ptbxl --use_all_leads")
+os.system("python3 ./sergio/generate_h5.py ./data/train_REC ./data/train.hdf5 --root_dir ./ptbxl  --use_all_leads")
+os.system("python3 ./sergio/generate_h5.py ./data/validation_REC ./data/validation.hdf5 --root_dir ./ptbxl --use_all_leads")
 

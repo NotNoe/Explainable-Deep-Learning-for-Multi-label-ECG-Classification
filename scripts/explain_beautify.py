@@ -85,7 +85,7 @@ def plot_ecg_with_explanations(N_ECG, explanation_path):
 
 
 if __name__ == "__main__":
-    perfect = json.load(open("out.json"))
+    perfect = json.load(open("perfects.json"))
     ETIQUETAS = ["CD", "HYP", "MI", "NORM", "STTC"]
     for label in ETIQUETAS:
         path = f"./out/explanations/{label}"

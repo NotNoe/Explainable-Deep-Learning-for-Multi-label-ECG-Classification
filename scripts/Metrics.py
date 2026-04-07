@@ -3,6 +3,8 @@ import json
 from scipy import stats
 from sklearn.metrics import (precision_recall_fscore_support, fbeta_score,
                              roc_auc_score, roc_curve)
+from statsmodels.stats.contingency_tables import mcnemar
+from MLstatkit import Delong_test
 
 class Metrics:
     def __init__(self, y_true, y_pred, class_names=None):
@@ -117,7 +119,7 @@ class Metrics:
         micro_auc = roc_auc_score(self.y_true, self.y_pred_prob, average='micro')
         return {
             'by_class': roc_auc_dict,
-            'micro_average': micro_auc
+            'global_average': micro_auc
         }
 
     def bootstrap_confidence_intervals(self, n_bootstrap=200, alpha=0.05, random_state=42):
@@ -149,7 +151,7 @@ class Metrics:
             'precision_global': [],
             'recall_global': [],
             'f1_score_global': [],
-            'roc_auc_micro': []
+            'roc_auc_global': []
         }
 
         for _ in range(n_bootstrap):
@@ -182,7 +184,7 @@ class Metrics:
                 micro_auc = roc_auc_score(y_true_b, y_pred_prob_b, average='micro')
             except ValueError:
                 micro_auc = np.nan
-            ci_store['roc_auc_micro'].append(micro_auc)
+            ci_store['roc_auc_global'].append(micro_auc)
 
         def _percentile(values):
             return [float(np.nanpercentile(values, 100 * alpha / 2)),
@@ -196,7 +198,7 @@ class Metrics:
             'precision_global': _percentile(ci_store['precision_global']),
             'recall_global': _percentile(ci_store['recall_global']),
             'f1_score_global': _percentile(ci_store['f1_score_global']),
-            'roc_auc_micro': _percentile(ci_store['roc_auc_micro'])
+            'roc_auc_global': _percentile(ci_store['roc_auc_global'])
         }
         return result
 
@@ -333,32 +335,7 @@ class ComparisonMetrics:
             y_pred_a_class = self.y_pred_a_prob[:, i]
             y_pred_b_class = self.y_pred_b_prob[:, i]
 
-            # Bootstrap para calcular la distribución de la diferencia de AUC
-            n_boot = 1000
-            auc_diffs = []
-            n_samples = len(y_true_class)
-
-            for _ in range(n_boot):
-                idx = np.random.choice(n_samples, n_samples, replace=True)
-                y_true_boot = y_true_class[idx]
-                y_pred_a_boot = y_pred_a_class[idx]
-                y_pred_b_boot = y_pred_b_class[idx]
-
-                if np.unique(y_true_boot).size < 2:
-                    continue
-
-                auc_a_boot = roc_auc_score(y_true_boot, y_pred_a_boot)
-                auc_b_boot = roc_auc_score(y_true_boot, y_pred_b_boot)
-                auc_diffs.append(auc_a_boot - auc_b_boot)
-
-            auc_diff_mean = np.mean(auc_diffs)
-            auc_diff_std = np.std(auc_diffs, ddof=1)  # ddof=1 para sample std
-
-            if auc_diff_std == 0 or np.isnan(auc_diff_std):
-                p_value = 1.0
-            else:
-                z = auc_diff_mean / auc_diff_std
-                p_value = 2 * (1 - stats.norm.cdf(abs(z)))
+            _, p_value = Delong_test(y_true_class, y_pred_a_class, y_pred_b_class, return_auc=False, return_ci=False)
 
             delong_results[class_name] = float(p_value)
 
@@ -396,7 +373,7 @@ class ComparisonMetrics:
             if b + c == 0:
                 mcnemar_results[class_name] = 1.0  # No diferencia
             else:
-                result = stats.mcnemar(table, exact=False, correction=True)
+                result = mcnemar(table, exact=False, correction=True)
                 mcnemar_results[class_name] = float(result.pvalue)
 
         return mcnemar_results

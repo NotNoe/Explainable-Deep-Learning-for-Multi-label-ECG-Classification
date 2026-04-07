@@ -3,7 +3,7 @@ import pandas as pd
 from Metrics import Metrics, ComparisonMetrics
 import os
 
-MODELS = {"original_model", "stft_model", "cwt_morlet_model"}
+MODELS = {"original_model", "stft_model", "cwt_morlet_model", "cwt_ricker_model"}
 MODELS_TO_COMPARE = MODELS - {"original_model"}
 TEST_DATA_CSV = "./data/test_db.csv"
 
