@@ -571,3 +571,6 @@ test/*/tmp/
 final_models/cwt_morlet_model.hdf5
 backup_model_last.hdf5
 backup_model_best.hdf5
+ptbxl.zip
+.venv39
+test_metrics

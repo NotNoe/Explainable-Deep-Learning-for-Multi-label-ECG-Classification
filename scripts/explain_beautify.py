@@ -80,7 +80,7 @@ def plot_ecg_with_explanations(N_ECG, explanation_path):
 
     # Añadimos una barra de color
     cbar = fig.colorbar(heatmap, ax=ax, shrink=1)
-    cbar.set_label("Relevancia")
+    cbar.set_label("Relevance")
     plt.savefig(os.path.join(explanation_path, "better_explanation.png"))
 
 
