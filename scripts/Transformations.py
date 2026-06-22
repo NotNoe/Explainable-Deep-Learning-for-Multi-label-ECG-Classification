@@ -2,22 +2,21 @@ from scipy.signal import stft, cwt, ricker, morlet2
 import numpy as np
 
 FREQ = 400
-#Creamos la clase para las transformaciones
-class Transformaciones:
-    #El constructor recibe los datos, que son una cantidad de matrices de 4096x12
+class Transformations:
+    #Each ecg is a 4096x12 matrix
     def __init__(self, ecgs):
         self.ecgs = ecgs
         self.n_cases = ecgs.shape[0]
 
 
-    def get_cwt_arrays(self, wavelet = ricker, scales = np.linspace(1,128,100)):  
-        #Calculamos las dimensiones de la matriz de salida usando la primera matriz de entrada
+    def get_cwt_arrays(self, wavelet = ricker, scales = np.linspace(1,128,100)):
+        # We calculate the dimensions of the output matrix using the first input matrix  
         if wavelet == ricker:
             f = FREQ / (2*np.pi*scales)
         elif wavelet == morlet2:
             f = (5 * FREQ) / (2 * np.pi * scales)
         else:
-            raise NotImplementedError("Wavelet no reconocido")
+            raise NotImplementedError("Wavelet not recognized")
 
         t = np.arange(self.ecgs[0].shape[0]) / FREQ
         return f,t
@@ -27,24 +26,23 @@ class Transformaciones:
         for i in range(self.n_cases):
             ecg = self.ecgs[i]
             cwt_i = np.zeros((len(scales) * ecg.shape[1], ecg.shape[0]))
-            for j in range(ecg.shape[1]): #Iteramos sobre las derivaciones
+            for j in range(ecg.shape[1]): #Iterating over the derivations
                 Zxx = np.abs(cwt(ecg[:,j], wavelet=wavelet, widths=scales))
                 cwt_i[j * len(scales):(j + 1) * len(scales), :] = Zxx
             cwts.append(cwt_i)
         return np.array(cwts)
 
     def get_stft_arrays(self, nperseg=256, noverlap=128):
-        #Calculamos las dimensiones de la matriz de salida usando la primera matriz de entrada
+        # We calculate the dimensions of the output matrix using the first input matrix  
         f, t, _ = stft(self.ecgs[0][:, 0], fs=FREQ, nperseg=nperseg, noverlap=noverlap)
         return f, t
 
-    #Función que realiza la transformada STFT
+    #Function that performs the STFT transform
     def stft(self, nperseg=256, noverlap=128):
-        #Calculamos las dimensiones de la matriz de salida usando la primera matriz de entrada
+        # We calculate the dimensions of the output matrix using the first input matrix
         n_frequencies, n_times = stft(self.ecgs[0][:, 0], fs=FREQ, nperseg=nperseg, noverlap=noverlap)[2].shape
-        #Creamos un array vacío para guardar los resultados
         stfts = []
-        #Iteramos sobre los datos
+        #Iterating over the data
         for i in range(self.n_cases):
             ecg = self.ecgs[i]
             stft_i = np.zeros((n_frequencies * ecg.shape[1], n_times))

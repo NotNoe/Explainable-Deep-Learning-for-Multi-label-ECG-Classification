@@ -9,26 +9,26 @@ from MLstatkit import Delong_test
 class Metrics:
     def __init__(self, y_true, y_pred, class_names=None):
         """
-        Inicializa la clase Metrics con matrices de etiquetas reales y predicciones.
+        Inits Metrics class with true labels and predictions matrix.
 
         Parameters:
-        y_true (np.ndarray): Array de valores reales (probabilidades entre 0 y 1).
-                             Dimensión: (n_samples, n_classes)
-        y_pred (np.ndarray): Array de predicciones (probabilidades entre 0 y 1).
-                             Dimensión: (n_samples, n_classes)
-        class_names (list, opcional): Lista con los nombres de las clases.
-                                      Longitud: n_classes
+        y_true (np.ndarray): Real values array (probabilities between 0 and 1).
+                             Dimension: (n_samples, n_classes)
+        y_pred (np.ndarray): Array of predictions (probabilities between 0 and 1).
+                             Dimension: (n_samples, n_classes)
+        class_names (list, optional): List with the names of the classes.
+                                      Length: n_classes
         """
         self.y_true_prob = y_true
         self.y_pred_prob = y_pred
         self.class_names = class_names
         self.n_classes = y_true.shape[1]
 
-        # Binarizar las etiquetas reales y predichas usando un umbral de 0.5
+        # Make labels binary using a threshold of 0.5
         self.y_true = (self.y_true_prob >= 0.5).astype(int)
         self.y_pred = (self.y_pred_prob >= 0.5).astype(int)
 
-        # Verificar si alguna clase no tiene representantes en y_true
+        # Check if any class has no representatives in y_true
         self.classes_with_no_samples = []
         for i in range(self.n_classes):
             y_true_sum = np.sum(self.y_true[:, i])
@@ -36,18 +36,18 @@ class Metrics:
                 if self.class_names:
                     class_name = self.class_names[i]
                 else:
-                    class_name = f'Clase_{i}'
+                    class_name = f'Class_{i}'
                 self.classes_with_no_samples.append(class_name)
 
         if self.classes_with_no_samples:
-            print(f"Advertencia: Las siguientes clases no tienen representantes en la muestra de test: {', '.join(self.classes_with_no_samples)}")
+            print(f"Warning: The following classes have no representatives in the test sample: {', '.join(self.classes_with_no_samples)}")
 
     def calculate_precision_recall_f1(self):
         """
-        Calcula las métricas de precisión, recall y F1-score para cada clase y de manera global.
+        Calculates precision, recall and F1-score for each class and globally.
 
         Returns:
-        dict: Diccionario con las métricas calculadas.
+        dict: Dictionary with the calculated metrics.
         """
         precision_dict = {}
         recall_dict = {}
@@ -55,7 +55,7 @@ class Metrics:
         
         precision_list, recall_list, f1_list, _ = precision_recall_fscore_support(self.y_true, self.y_pred, zero_division=np.nan)
         for i in range(self.n_classes): #Para cada clase
-            class_name = self.class_names[i] if self.class_names else f'Clase_{i}'
+            class_name = self.class_names[i] if self.class_names else f'Class_{i}'
             precision_dict[class_name] = precision_list[i]
             recall_dict[class_name] = recall_list[i]
             f1_dict[class_name] = f1_list[i]
@@ -82,35 +82,35 @@ class Metrics:
 
     def calculate_adjusted_f_score(self):
         """
-        Calcula la métrica personalizada 'adjusted_f_score' combinando F0.5 para 'NORM' y F2 para las demás clases.
+        Calculates the custom metric 'adjusted_f_score' by combining F0.5 for 'NORM' and F2 for the other classes.
 
         Returns:
-        float or None: Valor de la métrica personalizada.
+        float or None: Value of the custom metric.
         """
         if self.class_names is None:
-            clase_especial = 3
-            print("Warning: No se han proporcionado los nombres de las clases. Se asumirá que la clase NORM es la clase 3.")
+            special_class = 3
+            print("Warning: No class names provided. It will be assumed that the NORM class is the third class.")
         else:
-            clase_especial = self.class_names.index('NORM')
-        metricas = []
+            special_class = self.class_names.index('NORM')
+        metrics = []
         for cls in range(self.n_classes):
-            beta = 0.5 if cls == clase_especial else 2
+            beta = 0.5 if cls == special_class else 2
             f_score = fbeta_score(self.y_true[:, cls], self.y_pred[:, cls], beta=beta)
-            metricas.append(f_score)
-        adjusted_f_score = np.mean(metricas)
+            metrics.append(f_score)
+        adjusted_f_score = np.mean(metrics)
 
         return adjusted_f_score
     
     def calculate_roc_auc(self):
         """
-        Calcula el AUC ROC para cada clase y la media micro.
+        Calculates the ROC AUC for each class and the micro-average.
 
         Returns:
-        dict: Diccionario con AUC ROC por clase y micro-average.
+        dict: Dictionary with AUC ROC by class and micro-average.
         """
         roc_auc_dict = {}
         for i in range(self.n_classes):
-            class_name = self.class_names[i] if self.class_names else f'Clase_{i}'
+            class_name = self.class_names[i] if self.class_names else f'Class_{i}'
             if np.unique(self.y_true[:, i]).size < 2:
                 roc_auc_dict[class_name] = np.nan
             else:
@@ -124,15 +124,15 @@ class Metrics:
 
     def bootstrap_confidence_intervals(self, n_bootstrap=200, alpha=0.05, random_state=42):
         """
-        Estima intervalos de confianza por bootstrap para AUC ROC y métricas básicas.
+        Estimates confidence intervals by bootstrap for AUC ROC and basic metrics.
 
         Parameters:
-        n_bootstrap (int): Número de resamples.
-        alpha (float): Nivel de significancia (0.05 => 95% CI).
-        random_state (int): Semilla para reproducibilidad.
+        n_bootstrap (int): Number of resamples.
+        alpha (float): Significance level (0.05 => 95% CI).
+        random_state (int): Seed for reproducibility.
 
         Returns:
-        dict: Intervalos de confianza de los principales indicadores.
+        dict: Confidence intervals of the main indicators.
         """
         if n_bootstrap <= 0:
             return {}
@@ -140,7 +140,7 @@ class Metrics:
         rng = np.random.default_rng(random_state)
         n_samples = self.y_true.shape[0]
 
-        class_names = [self.class_names[i] if self.class_names else f'Clase_{i}'
+        class_names = [self.class_names[i] if self.class_names else f'Class_{i}'
                        for i in range(self.n_classes)]
 
         ci_store = {
@@ -204,13 +204,13 @@ class Metrics:
 
     def get_roc_curve_data(self):
         """
-        Calcula los datos de las curvas ROC para cada clase y para la media micro.
+        Calculates the data for the ROC curves for each class and for the micro-average.
 
         Returns:
-        dict: Estructura con los arrays fpr, tpr y thresholds para cada curva.
+        dict: Structure with the arrays fpr, tpr and thresholds for each curve.
         """
         roc_curve_dict = {}
-        class_names = [self.class_names[i] if self.class_names else f'Clase_{i}'
+        class_names = [self.class_names[i] if self.class_names else f'Class_{i}'
                        for i in range(self.n_classes)]
 
         for i, class_name in enumerate(class_names):
@@ -249,12 +249,12 @@ class Metrics:
 
     def dump_to_json(self, path, bootstrap_samples=200, confidence_level=0.95):
         """
-        Escribe las métricas calculadas en un archivo JSON.
+        Writes the calculated metrics to a JSON file.
 
         Parameters:
-        path (str): Ruta al archivo JSON de salida.
-        bootstrap_samples (int): Número de resamples bootstrap para intervalos de confianza.
-        confidence_level (float): Nivel de confianza.
+        path (str): Path to the output JSON file.
+        bootstrap_samples (int): Number of bootstrap resamples for confidence intervals.
+        confidence_level (float): Confidence level.
         """
         metrics = {}
         adjusted_f_score = self.calculate_adjusted_f_score()
@@ -280,15 +280,15 @@ class Metrics:
 class ComparisonMetrics:
     def __init__(self, y_true, y_pred_a, y_pred_b, class_names=None):
         """
-        Inicializa la clase Metrics con matrices de etiquetas reales y predicciones.
+        Inits Metrics class with true labels and predictions matrix.
 
         Parameters:
-        y_true (np.ndarray): Array de valores reales (probabilidades entre 0 y 1).
-                             Dimensión: (n_samples, n_classes)
-        y_pred (np.ndarray): Array de predicciones (probabilidades entre 0 y 1).
-                             Dimensión: (n_samples, n_classes)
-        class_names (list, opcional): Lista con los nombres de las clases.
-                                      Longitud: n_classes
+        y_true (np.ndarray): Real values array (probabilities between 0 and 1).
+                             Dimension: (n_samples, n_classes)
+        y_pred (np.ndarray): Predictions array (probabilities between 0 and 1).
+                             Dimension: (n_samples, n_classes)
+        class_names (list, optional): List with the names of the classes.
+                                      Length: n_classes
         """
         self.y_true_prob = y_true
         self.y_pred_a_prob = y_pred_a
@@ -296,12 +296,12 @@ class ComparisonMetrics:
         self.class_names = class_names
         self.n_classes = y_true.shape[1]
 
-        # Binarizar las etiquetas reales y predichas usando un umbral de 0.5
+        # Make labels binary using a threshold of 0.5
         self.y_true = (self.y_true_prob >= 0.5).astype(int)
         self.y_pred_a = (self.y_pred_a_prob >= 0.5).astype(int)
         self.y_pred_b = (self.y_pred_b_prob >= 0.5).astype(int)
 
-        # Verificar si alguna clase no tiene representantes en y_true
+        # Verify if any class has no representatives in y_true
         self.classes_with_no_samples = []
         for i in range(self.n_classes):
             y_true_sum = np.sum(self.y_true[:, i])
@@ -309,21 +309,21 @@ class ComparisonMetrics:
                 if self.class_names:
                     class_name = self.class_names[i]
                 else:
-                    class_name = f'Clase_{i}'
+                    class_name = f'Class_{i}'
                 self.classes_with_no_samples.append(class_name)
 
         if self.classes_with_no_samples:
-            print(f"Advertencia: Las siguientes clases no tienen representantes en la muestra de test: {', '.join(self.classes_with_no_samples)}")
+            print(f"Warning: The following classes have no representatives in the test sample: {', '.join(self.classes_with_no_samples)}")
 
     def delong_test(self):
         """
-        Realiza el test de DeLong para comparar AUC ROC entre modelo A y B por clase usando bootstrap.
+        Performs the DeLong test to compare ROC AUC between model A and B by class using bootstrap.
 
         Returns:
-        dict: P-values por clase para la diferencia de AUC (A vs B).
+        dict: Per class P-values for the AUC difference (A vs B).
         """
         delong_results = {}
-        class_names = [self.class_names[i] if self.class_names else f'Clase_{i}'
+        class_names = [self.class_names[i] if self.class_names else f'Class_{i}'
                        for i in range(self.n_classes)]
 
         for i, class_name in enumerate(class_names):
@@ -343,13 +343,13 @@ class ComparisonMetrics:
 
     def mcnemar_test(self):
         """
-        Realiza el test de McNemar para comparar predicciones binarias entre modelo A y B por clase usando scipy.stats.mcnemar.
+        Performs the McNemar test to compare binary predictions between model A and B by class using scipy.stats.mcnemar.
 
         Returns:
-        dict: P-values por clase para la diferencia de predicciones.
+        dict: P-values by class for the prediction difference.
         """
         mcnemar_results = {}
-        class_names = [self.class_names[i] if self.class_names else f'Clase_{i}'
+        class_names = [self.class_names[i] if self.class_names else f'Class_{i}'
                        for i in range(self.n_classes)]
 
         for i, class_name in enumerate(class_names):
@@ -361,7 +361,7 @@ class ComparisonMetrics:
             y_pred_a_class = self.y_pred_a[:, i]
             y_pred_b_class = self.y_pred_b[:, i]
 
-            # Construir tabla de contingencia completa para McNemar
+            # Construct complete contingency table for McNemar
             a = np.sum((y_pred_a_class == y_true_class) & (y_pred_b_class == y_true_class))
             b = np.sum((y_pred_a_class == y_true_class) & (y_pred_b_class != y_true_class))
             c = np.sum((y_pred_a_class != y_true_class) & (y_pred_b_class == y_true_class))
@@ -369,9 +369,9 @@ class ComparisonMetrics:
 
             table = np.array([[a, b], [c, d]])
 
-            # Verificar si hay suficientes datos para el test
+            # Verify if there are sufficient data for the test
             if b + c == 0:
-                mcnemar_results[class_name] = 1.0  # No diferencia
+                mcnemar_results[class_name] = 1.0  # No difference
             else:
                 result = mcnemar(table, exact=False, correction=True)
                 mcnemar_results[class_name] = float(result.pvalue)
@@ -380,10 +380,10 @@ class ComparisonMetrics:
 
     def dump_to_json(self, path):
         """
-        Escribe los resultados de comparación en un archivo JSON.
+        Writes the comparison results to a JSON file.
 
         Parameters:
-        path (str): Ruta al archivo JSON de salida.
+        path (str): Path to the output JSON file.
         """
         comparison_results = {
             'delong_test': self.delong_test(),
