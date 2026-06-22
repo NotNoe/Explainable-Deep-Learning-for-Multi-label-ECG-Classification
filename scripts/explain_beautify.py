@@ -80,12 +80,12 @@ def plot_ecg_with_explanations(N_ECG, explanation_path):
 
     # Añadimos una barra de color
     cbar = fig.colorbar(heatmap, ax=ax, shrink=1)
-    cbar.set_label("Relevancia")
+    cbar.set_label("Relevance")
     plt.savefig(os.path.join(explanation_path, "better_explanation.png"))
 
 
 if __name__ == "__main__":
-    perfect = json.load(open("out.json"))
+    perfect = json.load(open("perfects.json"))
     ETIQUETAS = ["CD", "HYP", "MI", "NORM", "STTC"]
     for label in ETIQUETAS:
         path = f"./out/explanations/{label}"

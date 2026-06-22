@@ -1,0 +1,16 @@
+numpy==1.26.4
+pandas>=0.22
+tensorflow==2.15
+protobuf==4.23.4
+h5py>=2.8
+xmljson>=0.1.9
+scipy>=1.1
+scikit-learn>=0.20
+tqdm>=4.26
+xarray>=0.11.2
+seaborn>=0.9
+openpyxl>=3.0
+wfdb==4.1.2
+tsinterpret==0.4.7
+MLstatkit
+ecg_plot

@@ -11,7 +11,7 @@ import logging
 
 logging.getLogger('tensorflow').setLevel(logging.ERROR)
 
-perfect = json.load(open("out.json"))
+perfect = json.load(open("perfects.json"))
 ETIQUETAS = ["CD", "HYP", "MI", "NORM", "STTC"]
 # Load the datasets
 test_x = h5py.File('./data/test.hdf5', 'r')["tracings"]
@@ -30,8 +30,7 @@ for label in ETIQUETAS:
     for item in array:
         ITEM_IDX = item["linea"] - 2
         ecg_id = item["ecg_id"]
-        if ecg_id in [157, 180, 448, 598, 618, 514]:
-            continue
+
 
         with strategy.scope():
             explainer = TSR(

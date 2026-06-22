@@ -545,11 +545,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode/
 *.code-workspace
 
 # Local History for Visual Studio Code
@@ -573,5 +569,9 @@ QoL/
 test/*/tmp/
 .nfs*
 final_models/cwt_morlet_model.hdf5
+final_models/cwt_ricker_model.hdf5
 backup_model_last.hdf5
 backup_model_best.hdf5
+ptbxl.*
+.venv39
+test_metrics
