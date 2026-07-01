@@ -10,9 +10,6 @@ Mario Sanz-Guerrero
 Belen Díaz Agudo
 Juan A. Recio-Garcia
 
-# Conference
-ACM Conference on Bioinformatics, Computational Biology, and Health Informatics 2026
-
 ## Abstract
 Cardiovascular diseases are one of the leading causes of death according to the
 WHO. The electrocardiogram (ECG) is one of the most efective diagnostic tools
