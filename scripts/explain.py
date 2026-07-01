@@ -12,7 +12,7 @@ import logging
 logging.getLogger('tensorflow').setLevel(logging.ERROR)
 
 perfect = json.load(open("perfects.json"))
-ETIQUETAS = ["CD", "HYP", "MI", "NORM", "STTC"]
+LABELS = ["CD", "HYP", "MI", "NORM", "STTC"]
 # Load the datasets
 test_x = h5py.File('./data/test.hdf5', 'r')["tracings"]
 # Load the labels from the CSV file
@@ -24,7 +24,7 @@ model = load_model("./final_models/original_model.hdf5")
 strategy = tf.distribute.MirroredStrategy()
 print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
-for label in ETIQUETAS:
+for label in LABELS:
     os.makedirs(f"./out/explanations/original_model/{label}", exist_ok=True)
     array = perfect[label][:5]
     for item in array:

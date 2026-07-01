@@ -1,7 +1,6 @@
 import json
 import numpy as np
 import pandas as pd
-from pandas.plotting import table
 import matplotlib.pyplot as plt
 from pathlib import Path
 from tabulate import tabulate
@@ -10,7 +9,7 @@ TEST_DIR = Path("./test")
 OUT_DIR = Path("./out/metrics")
 
 if not TEST_DIR.exists():
-    print(f"❌ Error: Directorio de test no encontrado: {TEST_DIR}")
+    print(f"❌ Error: Directory not found: {TEST_DIR}")
     exit(1)
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 CLASSES = ["CD", "HYP", "MI", "NORM", "STTC"]
@@ -24,7 +23,7 @@ def generate_metrics_tables(print_tables: bool = True, save_tables: bool = False
             continue
         metrics_path = model_dir / "metrics.json"
         if not metrics_path.exists():
-            print(f"⚠ No se encontró metrics.json en {model_dir}")
+            print(f"metrics.json not found in {model_dir}")
             continue
         with open(metrics_path) as f:
             metrics = json.load(f)
@@ -32,17 +31,17 @@ def generate_metrics_tables(print_tables: bool = True, save_tables: bool = False
         model_title = model_name.replace('_', ' ').title()
 
         table_list = {model_title: ["F1", "Recall", "Precision", "ROC AUC"]}
-        for clase in CLASSES:
-            metrics_values = [metrics.get(metric, {}).get('by_class', {}).get(clase, np.nan) for metric in METRICS]
-            confidence_intervals = [metrics.get('confidence_intervals', {}).get(metric, {}).get(clase, [np.nan, np.nan]) for metric in METRICS]
-            table_list[clase] = [f"{val:.3f} [{ci[0]:.3f}, {ci[1]:.3f}]" for val, ci in zip(metrics_values, confidence_intervals)]
+        for ecg_class in CLASSES:
+            metrics_values = [metrics.get(metric, {}).get('by_class', {}).get(ecg_class, np.nan) for metric in METRICS]
+            confidence_intervals = [metrics.get('confidence_intervals', {}).get(metric, {}).get(ecg_class, [np.nan, np.nan]) for metric in METRICS]
+            table_list[ecg_class] = [f"{val:.3f} [{ci[0]:.3f}, {ci[1]:.3f}]" for val, ci in zip(metrics_values, confidence_intervals)]
         global_metrics_values = [metrics.get(metric, {}).get('global_average', np.nan) for metric in METRICS]
         global_confidence_intervals = [metrics.get('confidence_intervals', {}).get(f'{metric}_global', [np.nan, np.nan]) for metric in METRICS]
         table_list["Global"] = [f"{val:.3f} [{ci[0]:.3f}, {ci[1]:.3f}]" for val, ci in zip(global_metrics_values, global_confidence_intervals)]
 
         table = tabulate(table_list, headers = 'keys', tablefmt = 'psql')
         if print_tables:
-            print(f"\nMétricas para {model_title}:\n")
+            print(f"\nMMetrics for {model_title}:\n")
             print(table)
         if save_tables:
             with open(SAVE_PATH / f'{model_name}_metrics.txt', 'w') as f:
@@ -57,19 +56,18 @@ def plot_roc_curves_by_model(show_plots: bool = False, save_plots: bool = True) 
     SAVE_PATH.mkdir(parents=True, exist_ok=True)
     colors = plt.cm.Set1(np.linspace(0, 1, len(CLASSES)))
     for model_dir in TEST_DIR.iterdir():
-    #for model_dir in [Path("./test_backup/original_model/")]:
         fig, ax = plt.subplots()
         model_name = model_dir.name
         model_title = model_name.replace('_', ' ').title()
         metrics_path = model_dir / "metrics.json"
         if not metrics_path.exists():
-            print(f"⚠ No se encontró metrics.json en {model_dir}")
+            print(f"metrics.json not found in {model_dir}")
             continue
         with open(metrics_path) as f:
             metrics = json.load(f)
             roc_curves = metrics.get('roc_curve', None)
         if roc_curves is None:
-            print(f"⚠ No se encontró roc_curve en {model_dir}/metrics.json")
+            print(f"roc_curve not found in {model_dir}/metrics.json")
             continue
 
         roc_auc = metrics.get('roc_auc', {}).get('by_class', {})
@@ -120,13 +118,13 @@ def plot_roc_curves_by_class(show_plots: bool = False, save_plots: bool = True) 
             model_name = model_dir.name
             metrics_path = model_dir / "metrics.json"
             if not metrics_path.exists():
-                print(f"⚠ No se encontró metrics.json en {model_dir}")
+                print(f"metrics.json not found in {model_dir}")
                 continue
             with open(metrics_path) as f:
                 metrics = json.load(f)
                 roc_curves = metrics.get('roc_curve', None)
             if roc_curves is None:
-                print(f"⚠ No se encontró roc_curve en {model_dir}/metrics.json")
+                print(f"roc_curve not found in {model_dir}/metrics.json")
                 continue
 
             if class_name not in roc_curves:
@@ -161,7 +159,7 @@ def plot_roc_curves_by_class(show_plots: bool = False, save_plots: bool = True) 
             plt.show()
         if save_plots:
             plt.savefig(SAVE_PATH / f'{class_name}_roc_curve.pdf', dpi=300, bbox_inches='tight')
-            print(f"  ✓ Guardado: {class_name}_roc_curve.pdf")
+            print(f"Saved: {class_name}_roc_curve.pdf")
 
 def generate_comparison_table(print_tables: bool = True, save_tables: bool = False, latex_mode: bool = False) -> None:
     table_list = {"Comparison to original model": CLASSES}
@@ -171,7 +169,7 @@ def generate_comparison_table(print_tables: bool = True, save_tables: bool = Fal
             continue
         comparison_path = model_path / "comparison_to_original.json"
         if not comparison_path.exists():
-            print(f"⚠ No se encontró comparison_to_original.json en {model_path}")
+            print(f"comparison_to_original.json not found in {model_path}")
             continue
         with open(comparison_path) as f:
             comparison = json.load(f)
@@ -180,14 +178,14 @@ def generate_comparison_table(print_tables: bool = True, save_tables: bool = Fal
         model_title = model_name.replace('_', ' ').title()
         delong_results = comparison.get('delong_test', None)
         if not delong_results:
-            print(f"⚠ No se encontró delong_test en {model_path}/comparison_to_original.json")
+            print(f"delong_test not found in {model_path}/comparison_to_original.json")
             table_list[model_title] = ["N/A"] * len(CLASSES)
             continue
         delong_results = [delong_results.get(class_name, np.nan) for class_name in CLASSES]
         table_list[model_title + " (DeLong)"] = [f"{val: .4f} ({'Sí' if val < 0.05 else 'No'})" if isinstance(val, (int, float)) and np.isfinite(val) else "N/A" for val in delong_results]
         mcnemar_results = comparison.get('mcnemar_test', {})
         if not mcnemar_results:
-            print(f"⚠ No se encontró mcnemar_test en {model_path}/comparison_to_original.json")
+            print(f"mcnemar_test not found in {model_path}/comparison_to_original.json")
             table_list[model_title + " (McNemar)"] = ["N/A"] * len(CLASSES)
             continue
         mcnemar_results = [mcnemar_results.get(class_name, np.nan) for class_name in CLASSES]
@@ -201,7 +199,7 @@ def generate_comparison_table(print_tables: bool = True, save_tables: bool = Fal
         with open(OUT_DIR / 'comparison_table.txt', 'w') as f:
             f.write(table)
     if print_tables:
-        print(f"\nComparativa con modelo original:\n")
+        print(f"\nOriginal model comparison:\n")
         print(table)
     if latex_mode:
         latex_table = tabulate(table_list, headers = 'keys', tablefmt = 'latex')

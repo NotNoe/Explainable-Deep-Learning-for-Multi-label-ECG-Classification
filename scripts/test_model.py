@@ -28,15 +28,15 @@ def main():
     test_data_csv = TEST_DATA + '_db.csv'
     test_data_hdf5 = TEST_DATA + '.hdf5'
     if not os.path.exists(model_path):
-        print(f"No se ha podido encontrar el modelo en la ruta {model_path}")
+        print(f"Model not found at {model_path}")
         sys.exit(1)
     if not os.path.exists(test_data_hdf5):
-        print(f"No se ha podido encontrar el archivo de datos de prueba en la ruta {test_data_hdf5}")
+        print(f"Test data file not found at {test_data_hdf5}")
         sys.exit(1)
     if not os.path.exists(results_path):
         os.makedirs(results_path)
     if not os.path.exists(test_data_csv):
-        print(f"No se ha podido encontrar el archivo de datos de etiquetas de los datos de prueba en la ruta {test_data_csv}")
+        print(f"Label data file not found at {test_data_csv}")
         sys.exit(1)
     else:
         class_names = pd.read_csv(test_data_csv).columns[1:].tolist()

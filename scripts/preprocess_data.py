@@ -1,4 +1,3 @@
-import csv
 import pandas as pd
 import ast
 import os
@@ -17,24 +16,23 @@ scp_statements = pd.read_csv('./ptbxl/scp_statements.csv', index_col=0)[['diagno
 super_classes = set(scp_statements['diagnostic_class'].unique())
 super_classes = {cls for cls in super_classes if pd.notna(cls)}
 super_classes.add('OTHER')
-super_classes = sorted(list(super_classes)) #Esto es necesario para que los datos sean iguales en todas las ejecuciones
+super_classes = sorted(list(super_classes)) # This is necessary for reproducibility
 
 def fill_columns(row:pd.Series) -> pd.Series:
     if isinstance(row['scp_codes'], str):
-    # Reemplazar comillas simples por dobles y convertir a diccionario
+    # Replace single quotes with double quotes and convert to dictionary
         cadena_json = row['scp_codes'].replace("'", '"')
         try:
             dict_probs = ast.literal_eval(cadena_json)
         except (ValueError, SyntaxError) as e:
-            print(f"Error al convertir la fila {index}: {e}")
+            print(f"Error while converting row {index}: {e}")
             return
     elif isinstance(row['scp_codes'], dict):
         dict_probs = row['scp_codes']
     else:
-        print(f"Tipo inesperado en la fila {index}: {type(row['scp_codes'])}")
-        raise NotImplementedError("Tipo no reconocido")
+        print(f"Unexpected type in row {index}: {type(row['scp_codes'])}")
+        raise NotImplementedError("Unexpected type")
     dict_probs = {k: v/100 for k, v in dict_probs.items()}
-    #dict_probs ahora es lo que queremos
 
     for super_class in super_classes:
         n = 0
@@ -44,7 +42,7 @@ def fill_columns(row:pd.Series) -> pd.Series:
                 superclass = scp_statements['diagnostic_class'].loc[diagnosis]
             except KeyError:
                 superclass = 'OTHER'
-            #Si su superclase coincide
+            #If the superclass is the same
             if superclass != super_class:
                 continue
             n += 1

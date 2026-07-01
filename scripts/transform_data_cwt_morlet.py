@@ -1,6 +1,6 @@
 import h5py
 from tqdm import tqdm
-from Transformaciones import Transformaciones
+from scripts.Transformations import Transformations
 from scipy.signal import morlet2 as morlet
 import numpy as np
 
@@ -8,20 +8,19 @@ destiny_dataset = "cwt_morlet"
 BATCH = 1
 files = ["data/train.hdf5", "data/test.hdf5", "data/validation.hdf5"]
 for filename in files:
-    #Abrimos el archivo y sacamos todos los datos en batches de 1000
     with h5py.File(filename, 'r+') as file:
         ecgs = file['tracings']
-        f, t = Transformaciones(ecgs[0:1]).get_cwt_arrays(morlet, scales=np.linspace(8, 637, 100))
+        f, t = Transformations(ecgs[0:1]).get_cwt_arrays(morlet, scales=np.linspace(8, 637, 100))
         n_ecgs = ecgs.shape[0]
-        #Si el dataset existe, lo borramos
+        #If the dataset exists, we delete it
         if destiny_dataset in file:
             del file[destiny_dataset]
         procesed = file.create_dataset(destiny_dataset, shape=(n_ecgs, len(f) * 12, len(t)), dtype='float32')
-        for i in tqdm(range(0, n_ecgs, BATCH), "Procesando el archivo " + filename):
+        for i in tqdm(range(0, n_ecgs, BATCH), "Processing file " + filename):
             end = min(i + BATCH, n_ecgs)
             batch_ecgs = ecgs[i:end,:,:]
-            transformaciones = Transformaciones(batch_ecgs)
-            transformed_ecg = transformaciones.cwt(morlet, scales=np.linspace(8,637,100))
+            transformations = Transformations(batch_ecgs)
+            transformed_ecg = transformations.cwt(morlet, scales=np.linspace(8,637,100))
             procesed[i:end] = transformed_ecg
 
 
