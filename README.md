@@ -3,12 +3,12 @@
 This repository contains the code used the paper named Explainable Deep Learning for Multi-Label ECG Classification: Clinical Validation and Systemic Analysis of Signal Transformations in the 17th ACM Conference on Bioinformatics, Computational Biology, and Health Informatics (ACM-BCB 2026).
 
 ## Authors
-Noelia Barranco Godoy
-Marian Diaz-Vicente
-Sergio González-Cabeza
-Mario Sanz-Guerrero
-Belen Díaz Agudo
-Juan A. Recio-Garcia
+* Noelia Barranco Godoy
+* Marian Diaz-Vicente
+* Sergio González-Cabeza
+* Mario Sanz-Guerrero
+* Belen Díaz Agudo
+* Juan A. Recio-Garcia
 
 ## Abstract
 Cardiovascular diseases are one of the leading causes of death according to the
