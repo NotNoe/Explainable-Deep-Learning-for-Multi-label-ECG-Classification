@@ -1,7 +1,5 @@
 MIT License (ENGLISH)
 
-Copyright (c) 2025 Noelia Barranco Godoy
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -26,34 +24,3 @@ MIT License Exclusions:
 
 - "ribeiro" folder: Contains modifications of Antonio Horta Ribeiro's code and remains under the author's original MIT license.
 - "sergio" folder: All content in this folder is owned by Sergio González Cabeza and is not covered by this license. All rights reserved to its author.
-
----
-
-Licencia MIT (ESPAÑOL)
-
-Copyright (c) 2025 Noelia Barranco Godoy
-
-Se concede permiso, de forma gratuita, a cualquier persona que obtenga una copia
-de este software y los archivos de documentación asociados (el "Software"), para tratar
-en el Software sin restricciones, incluyendo sin limitación los derechos
-de uso, copia, modificación, fusión, publicación, distribución, sublicencia y/o venta
-de copias del Software, y permitir a las personas a quienes se les proporcione el Software
-hacerlo, sujeto a las siguientes condiciones:
-
-El aviso de copyright anterior y este aviso de permiso se incluirán en todas
-las copias o partes sustanciales del Software.
-
-EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O
-IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A GARANTÍAS DE COMERCIABILIDAD,
-IDONEIDAD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS
-AUTORES O TITULARES DE DERECHOS DE AUTOR SERÁN RESPONSABLES POR NINGUNA
-RECLAMACIÓN, DAÑOS U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO,
-AGRAVIO O DE OTRO MODO, QUE SURJA DE, FUERA O EN CONEXIÓN CON EL SOFTWARE O EL
-USO U OTRO TIPO DE TRATO EN EL SOFTWARE.
-
----
-
-Exclusiones de la licencia MIT:
-
-- Carpeta "ribeiro": Contiene modificaciones de código de Antonio Horta Ribeiro y sigue bajo la licencia MIT original del autor.
-- Carpeta "sergio": Todo el contenido de esta carpeta es propiedad de Sergio González Cabeza y no está cubierto por la presente licencia. Todos los derechos reservados para su autor.

@@ -1,16 +1,15 @@
-# Explainable Cardiovascular Risk Prediction using Deep Learning
-
-This repository contains the code used for my Computer Science Degree Thesis at the Complutense University of Madrid.
+# Explainable Deep Learning for Multi-Label ECG Classification: Clinical Validation and Systemic Analysis of Signal Transformations
 
 ## Title
-Explainable Cardiovascular Risk Prediction using Deep Learning
+Explainable Deep Learning for Multi-Label ECG Classification: Clinical Validation and Systemic Analysis of Signal Transformations
 
-## Author
+## Authors
 Noelia Barranco Godoy
-## Directors
-Belén Díaz Agudo
-Juan A. Recio García
-María Ángeles Díaz Vicente
+Marian Diaz-Vicente
+Sergio González-Cabeza
+Mario Sanz-Guerrero
+Belen Díaz Agudo
+Juan A. Recio-Garcia
 
 ## Abstract
 Cardiovascular diseases are one of the leading causes of death according to the
@@ -53,4 +52,3 @@ professionals.
 - **perfects.json**: Output of `search_perfects.py`. It contains the line number and id of all testing ECKs considered "perfect", which means:
     - It has a real value of 1.0 for one of the classes and 0.0 for the others. This means that the ECK belongs to exactly one class with 100% confidence.
     - The model predicted correctly that the ECK belongs the correct class and only that one.
-- **TFG.pdf**: The final pdf.
